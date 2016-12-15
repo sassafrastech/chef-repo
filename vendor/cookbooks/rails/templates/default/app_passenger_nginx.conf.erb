@@ -12,8 +12,8 @@ server {
 server {
   listen 443 ssl;
   server_name <%= @redirect_domain_names.join(' ') %>;
-  ssl_certificate <%= node['rails']['applications_root'] %>/<%= @name %>/shared/config/certificate.crt;
-  ssl_certificate_key <%= node['rails']['applications_root'] %>/<%= @name %>/shared/config/certificate.key;
+  ssl_certificate /etc/nginx/ssl/<%= @domain_names.first %>.pem;
+  ssl_certificate_key /etc/nginx/ssl/<%= @domain_names.first %>.key;
 
   ssl_protocols               TLSv1 TLSv1.1 TLSv1.2;
   ssl_prefer_server_ciphers   on;
@@ -26,14 +26,15 @@ server {
 server {
   listen <%= node['nginx']['port'] || '80' %>;
   server_name <%= @domain_names.join(' ') %>;
-  root <%= node['rails']['applications_root'] %>/<%= @name %>/current/public;
 
-  passenger_enabled on;
-  passenger_app_env <%= @rails_env %>;
+  # Required for letsencrypt acme challenge
+  location /.well-known/acme-challenge {
+    root /var/www/letsencrypt;
+  }
 
-  <%= "client_max_body_size #{@client_max_body_size};" if @client_max_body_size.to_i != 0 %>
-
-  <%= @custom_configuration["server_main"] %>
+  location / {
+    return 301 https://$host$request_uri;
+  }
 }
 
 <% if @enable_ssl %>
@@ -41,8 +42,8 @@ server {
 server {
   listen 443 ssl;
 
-  ssl_certificate <%= node['rails']['applications_root'] %>/<%= @name %>/shared/config/certificate.crt;
-  ssl_certificate_key <%= node['rails']['applications_root'] %>/<%= @name %>/shared/config/certificate.key;
+  ssl_certificate /etc/letsencrypt/live/<%= @domain_names.first %>/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/<%= @domain_names.first %>/privkey.pem;
 
   ssl_protocols               TLSv1 TLSv1.1 TLSv1.2;
   ssl_prefer_server_ciphers   on;

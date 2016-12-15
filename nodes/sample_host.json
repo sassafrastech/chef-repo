@@ -1,17 +1,28 @@
 {
-  "run_list":["role[mysql]","role[remove_applications]", "role[rails_passenger]", "role[sysadmins]"],
-  "mysql": {
-    "server_debian_password": "<enter a random password>",
-    "server_root_password": "<enter a random password>",
-    "server_repl_password": "<enter a random password>"
+  "run_list": ["role[rails_passenger]", "role[sysadmins]"],
+  "automatic": {
+    "ipaddress": "localhost"
   },
-  "packages": ["<option list of system wide packages>"],
+  "mysql": {
+    "root_password": "xxx"
+  },
+  "packages": ["git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev libffi-dev sphinxsearch memcached imagemagick"],
+  "authorization": {
+    "sudo": {
+      "passwordless": "true"
+    }
+  },
+  "ssh_deploy_keys": [
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgBZ7Ve9PM+RopHqj7AAfmmynO6ZATYb9KLgzxO57zIgWGPmU5nkSiU05VXvQipwHuOLsc6mIeddckb9SeB/aOZow7OC6PLyMpOx4IKwuqekmBAyARf5iIe6Kegm24yoIRq8Dgq11RXIjsoRa/VIGuf/4WIjUdjHNiTC5qhXzITRZ0zGcpDlfbRgfrP6c2CYsdG2VzdYneenJkKY/hFye07ZfK0vdiXMX8wLmgf6sdXfA3YwKQRG2lHdHq/yJkYxgG+UVW4EpEZxftbvrmde9S5FRshbfx2cPtuRdyZe5HNONpm3Nwg6Jl3UAdb+FkRGIyPwz7SY5+xRjs1H/reFT/ tom@sassafras.coop",
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDO8NQj2/SOUZFBoN4XM+v8POrvGhiKxyd+qMXL2B477l0r29hzQi71d5hODC83EaSjEhwDxDH1fhuv22XJQHkqYo/Ev88VdOHs3t56pKZGsseRihnuiJe1uEdNMXDhjBxX9bHp6Ukcm3ko9a1jWyF6dlVD9TGjqzBn/EMfDBRHS2xqzaNrodHVaSZ39+m0TLEEfN5Kal6/zBQwzf97SoQsKWprihAQkQ3/pnI+OnqRhGD6513QpKvOW610nSoAfek8tDFEeV10A7YbRWvFNbplrFnfXdnEK8ZuS+MgZqsP5aYyfoAvNbR+tQqGf2iDXwJXrnalG0HvtTLBtBJ33t8z mel@sassafras.coop"
+  ],
   "sysadmins": {
-    "<username>": {
-      "password": "<hashed password: openssl passwd -1 'plaintextpassword'>",
+    "admin": {
+      "unhashed_password": "xxx",
+      "password": "xxx",
       "ssh_keys": [
-        "ssh-rsa AAA123...xyz== foo",
-        "ssh-rsa AAA456...uvw== bar"
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgBZ7Ve9PM+RopHqj7AAfmmynO6ZATYb9KLgzxO57zIgWGPmU5nkSiU05VXvQipwHuOLsc6mIeddckb9SeB/aOZow7OC6PLyMpOx4IKwuqekmBAyARf5iIe6Kegm24yoIRq8Dgq11RXIjsoRa/VIGuf/4WIjUdjHNiTC5qhXzITRZ0zGcpDlfbRgfrP6c2CYsdG2VzdYneenJkKY/hFye07ZfK0vdiXMX8wLmgf6sdXfA3YwKQRG2lHdHq/yJkYxgG+UVW4EpEZxftbvrmde9S5FRshbfx2cPtuRdyZe5HNONpm3Nwg6Jl3UAdb+FkRGIyPwz7SY5+xRjs1H/reFT/ tom@sassafras.coop",
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDO8NQj2/SOUZFBoN4XM+v8POrvGhiKxyd+qMXL2B477l0r29hzQi71d5hODC83EaSjEhwDxDH1fhuv22XJQHkqYo/Ev88VdOHs3t56pKZGsseRihnuiJe1uEdNMXDhjBxX9bHp6Ukcm3ko9a1jWyF6dlVD9TGjqzBn/EMfDBRHS2xqzaNrodHVaSZ39+m0TLEEfN5Kal6/zBQwzf97SoQsKWprihAQkQ3/pnI+OnqRhGD6513QpKvOW610nSoAfek8tDFEeV10A7YbRWvFNbplrFnfXdnEK8ZuS+MgZqsP5aYyfoAvNbR+tQqGf2iDXwJXrnalG0HvtTLBtBJ33t8z mel@sassafras.coop"
       ]
     }
   },
@@ -20,46 +31,49 @@
       "enabled": true
     }
   },
-  "ssh_deploy_keys": [
-    "<enter the contents of an id_rsa.pub here>"
-  ],
-  "remove_applications": ["<app_name>_<stage>"],
-  "backups": {
-    "<app_name>_<stage>" : {
-      "enabled": true,
-      "storage_type": "s3",
-      "s3_access_key": "<s3_access_key>",
-      "s3_secret_access_key": "<s3_secret_access_key>",
-      "s3_bucket": "<s3_bucketname>",
-      "s3_region": "<s3_region, i.e.: eu-west-1>",
-      "database_type": "<mysql, postgresql or none>",
-      "database_username": "<db_username>",
-      "database_password": "<db_password>",
-      "database_host": "<db_host likely localhost>"
-    }
+  "letsencrypt": {
+    "email": "xxx@gmail.com"
   },
   "active_applications": {
-    "<appname>_<stage>": {
-      "rails_env": "<stage, eg: production>",
+    "elmo": {
+      "rails_env": "production",
       "packages": ["nodejs"],
-      "domain_names": ["<domain name>", "<domain name>", "<...>"],
-      "redirect_domain_names": ["<domain name>", "<domain name>", "<...>"],
-      "ruby_version": "2.1.0",
-      "client_max_body_size": "200m",
+      "domain_names": ["example.com"],
+      "ruby_version": "2.2.0",
+      "client_max_body_size": "50m",
       "ssl_info": {
-        "key": "<ssl key>",
-        "crt": "<ssl crt>"
-        },
-      "env_vars": {
-        "key_1": "val_1",
-        "key_2": "val_2"
+        "key": "/etc/nginx/ssl/example.com.key",
+        "crt": "/etc/nginx/ssl/example.com.crt"
       },
       "database_info": {
         "adapter": "mysql2",
-        "host": "localhost",
-        "username": "<db username, max 10 characters>",
-        "password": "<enter a random password>",
-        "database": "<appname>_<stage>"
+        "host": "127.0.0.1",
+        "username": "elmo",
+        "password": "xxx",
+        "database": "elmo"
+      },
+      "config": {
+        "site_name": "ELMO",
+        "site_shortname": "ELMO",
+        "webmaster_email": "xxx@gmail.com",
+        "from_email": "xxx@gmail.com",
+        "smtp": {
+          "address": "smtp.gmail.com",
+          "port": 587,
+          "user_name": "xxx@gmail.com",
+          "password": "xxx",
+          "authentication": "plain",
+          "enable_starttls_auto": true
+        },
+        "frontlinecloud": {
+          "api_key": "xxx"
+        },
+        "google_maps_key": "xxx",
+        "recaptcha": {
+          "public_key": "xxx",
+          "private_key": "xxx"
+        },
+        "secret_key_base": "xxx"
       }
     }
   }

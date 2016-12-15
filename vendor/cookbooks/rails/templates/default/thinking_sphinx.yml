@@ -1,0 +1,6 @@
+# max_matches below is 1000000 due to the way fulltext search is done
+# fear not, that many ruby objects are never instantiated at once
+production:
+  mysql41: 9306
+  max_matches: 1000000
+  html_strip: true

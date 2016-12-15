@@ -42,6 +42,7 @@ if node[:active_applications]
     app_env['RAILS_ENV'] = rails_env
 
     rbenv_ruby app_info['ruby_version']
+    rbenv_global app_info['ruby_version']
 
     rbenv_gem "bundler" do
       ruby_version app_info['ruby_version']
@@ -62,7 +63,7 @@ if node[:active_applications]
      "shared/tmp/sockets",
      "shared/tmp/cache",
      "shared/tmp/sockets",
-     "shared/tmp/pids",
+     "shared/pids",
      "shared/log",
      "shared/system",
      "releases"].each do |dir|

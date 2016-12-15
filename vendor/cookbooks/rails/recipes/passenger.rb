@@ -78,7 +78,7 @@ if node[:active_applications]
      "shared/tmp/sockets",
      "shared/tmp/cache",
      "shared/tmp/sockets",
-     "shared/tmp/pids",
+     "shared/pids",
      "shared/log",
      "shared/system",
      "releases"].each do |dir|
@@ -143,11 +143,15 @@ if node[:active_applications]
         client_max_body_size: app_info["client_max_body_size"],
         enable_ssl: enable_ssl,
         custom_configuration: nginx_custom_configuration(app_info))
-      notifies :reload, resources(:service => "nginx")
+      notifies :reload, "service[nginx]"
     end
 
     nginx_site "#{app}.conf" do
       action :enable
+    end
+
+    nginx_site "default" do
+      enable false
     end
 
     logrotate_app "rails-#{app}" do
@@ -155,10 +159,7 @@ if node[:active_applications]
       path ["#{applications_root}/#{app}/current/log/*.log"]
       frequency "daily"
       rotate 14
-      compress true
       create "644 #{deploy_user} #{deploy_user}"
     end
-
   end
-
 end

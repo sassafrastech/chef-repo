@@ -1,0 +1,57 @@
+# Site name (shows up in banner and page title)
+configatron.site_name = "<%= @site_name %>"
+configatron.site_shortname = "<%= @site_shortname %>"
+# configatron.logo_path = "logo-override.png"
+# configatron.broadcast_tag = "[<%= @site_shortname %>]"
+
+# Address(es) where webmaster notifications (e.g. for system errors) will be sent.
+configatron.webmaster_emails = ["<%= @webmaster_email %>"]
+
+# Email address from which ELMO emails will appear to be from. Some mail servers require
+# that this be a real address controlled by the mailserver itself. e.g. if you're using Google Apps
+# for email, use an email address hosted in your Google Apps account.
+configatron.site_email = "\"#{configatron.site_name}\" <<%= @from_email %>>"
+
+# Whether to use HTTPS in the mailer URLs. This should be 'https' if your site uses SSL, and 'http' if not.
+configatron.mailer_url_protocol = 'https'
+
+# Mailer settings
+ELMO::Application.config.action_mailer.smtp_settings = <%= @smtp.inspect %>.symbolize_keys
+
+# Default outgoing SMS adapter settings.
+# These settings are copied by default to any new mission in the system.
+# This adapter is also used to send replies if the incoming message has an unknown mission and the
+# incoming adapter's reply style is `via_adapter`.
+<% unless @twilio.nil? %>
+# ** Twilio **
+configatron.default_settings.outgoing_sms_adapter = "Twilio"
+configatron.default_settings.twilio_account_sid = "<%= @twilio[:sid] %>"
+configatron.default_settings.twilio_auth_token = "<%= @twilio[:auth_token] %>"
+configatron.default_settings.twilio_phone_number = "<%= @twilio[:phone_number] %>"
+<% end %>
+<% unless @frontlinecloud.nil? %>
+# ** FrontlineCloud **
+configatron.default_settings.outgoing_sms_adapter = "FrontlineCloud"
+configatron.default_settings.frontlinecloud_api_key = "<%= @frontlinecloud[:api_key] %>"
+<% end %>
+
+# Google Maps API Key (Requires Google Maps Javascript and Geocoding APIs)
+configatron.google_maps_api_key = "<%= @google_maps_key %>"
+
+# Allows submissions without password via the /noauth/submission route.
+# This setting overrides the per-mission setting.
+# Also, if not true, the per-mission setting will not be available in UI.
+# Enable only if you really know what you are doing!
+configatron.allow_unauthenticated_submissions = false
+
+# Generate your secret key with this command:
+#   ruby -e "require 'securerandom'; puts SecureRandom.hex(128)"
+# And copy and paste into this file in place of `secret-token`.
+ELMO::Application.config.secret_key_base = "<%= @secret_key_base %>"
+
+# Configure reCAPTCHA for brute-force login protection
+# Keys may be obtained from https://www.google.com/recaptcha/admin
+Recaptcha.configure do |config|
+  config.public_key = "<%= @recaptcha[:public_key] %>"
+  config.private_key = "<%= @recaptcha[:private_key] %>"
+end

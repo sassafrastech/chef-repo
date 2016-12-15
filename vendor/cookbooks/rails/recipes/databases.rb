@@ -1,5 +1,3 @@
-include_recipe "database"
-
 if node[:active_applications]
   node[:active_applications].each do |app, app_info|
     if app_info['database_info']
@@ -9,9 +7,11 @@ if node[:active_applications]
       database_password = database_info['password']
 
       if database_info['adapter'] =~ /mysql/
-        include_recipe 'database::mysql'
-
-        mysql_connection_info = {:host => "localhost", :username => "root", :password => node['mysql']['server_root_password']}
+        mysql_connection_info = {
+          :host => "127.0.0.1",
+          :username => "root",
+          :password => node["mysql"]["root_password"]
+        }
 
         mysql_database database_name do
           connection(mysql_connection_info)
@@ -22,7 +22,7 @@ if node[:active_applications]
           username database_username
           password database_password
           database_name(database_name)
-          host "localhost"
+          host "127.0.0.1"
           action :grant
         end
       elsif database_info['adapter'] == 'postgresql'
@@ -32,7 +32,7 @@ if node[:active_applications]
           command psql
           returns [0,1]
         end
- 
+
         execute "create-database" do
           user 'postgres'
           command "createdb -U postgres -O #{database_username} #{database_name}"
