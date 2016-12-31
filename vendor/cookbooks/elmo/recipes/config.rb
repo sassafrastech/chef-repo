@@ -14,7 +14,7 @@ if node[:active_applications]
       owner "deploy"
       group "deploy"
       mode 0600
-      variables app_info["config"]
+      variables app_info["elmo_config"]
     end
 
     template "#{config_dir}/thinking_sphinx.yml" do

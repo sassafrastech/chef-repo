@@ -6,7 +6,6 @@ run_list(
   "recipe[rails::passenger]",
   "recipe[rails::letsencrypt]",
   "recipe[ruby_build]",
-  "recipe[rails::elmo_config]",
   "recipe[rbenv]",
   "recipe[rails::databases]",
   "recipe[rails::env_vars]",

@@ -1,0 +1,7 @@
+name             "elmo"
+maintainer       "Tom Smyth"
+maintainer_email "tom@sassafras.coop"
+license          "MIT"
+description      "Configures ELMO"
+long_description "Configures ELMO"
+version          "0.0.1"
