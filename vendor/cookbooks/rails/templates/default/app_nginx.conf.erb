@@ -3,10 +3,22 @@
 <% if @redirect_domain_names && @redirect_domain_names.any? %>
 server {
   listen <%= node['nginx']['port'] || '80' %>;
-  <% if @enable_ssl %>
-  listen 443 ssl;
-  <% end %>
   server_name <%= @redirect_domain_names.join(' ') %>;
+  return 301 $scheme://<%= @domain_names.first %>$request_uri;
+}
+<% end %>
+
+<% if @redirect_domain_names && @redirect_domain_names.any? && @enable_ssl %>
+server {
+  listen 443 ssl;
+  server_name <%= @redirect_domain_names.join(' ') %>;
+  ssl_certificate /etc/nginx/ssl/<%= @domain_names.first %>.pem;
+  ssl_certificate_key /etc/nginx/ssl/<%= @domain_names.first %>.key;
+
+  ssl_protocols               TLSv1 TLSv1.1 TLSv1.2;
+  ssl_prefer_server_ciphers   on;
+  ssl_ciphers                 "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA !RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS";
+
   return 301 $scheme://<%= @domain_names.first %>$request_uri;
 }
 <% end %>
@@ -14,20 +26,15 @@ server {
 server {
   listen <%= node['nginx']['port'] || '80' %>;
   server_name <%= @domain_names.join(' ') %>;
-  root <%= node['rails']['applications_root'] %>/<%= @name %>/current/public;
 
-  try_files $uri/index.html $uri.html $uri @app;
-
-  location @app {
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
-    proxy_redirect off;
-
-    proxy_pass http://<%= @name %>;
-    <%= @custom_configuration["server_app"] %>
+  # Required for letsencrypt acme challenge
+  location /.well-known/acme-challenge {
+    root /var/www/letsencrypt;
   }
-  <%= "client_max_body_size #{@client_max_body_size};" if @client_max_body_size.to_i != 0 %>
-  <%= @custom_configuration["server_main"] %>
+
+  location / {
+    return 301 https://$host$request_uri;
+  }
 }
 
 <% if @enable_ssl %>
@@ -35,35 +42,24 @@ server {
 server {
   listen 443 ssl;
 
-  ssl_certificate <%= node['rails']['applications_root'] %>/<%= @name %>/shared/config/certificate.crt;
-  ssl_certificate_key <%= node['rails']['applications_root'] %>/<%= @name %>/shared/config/certificate.key;
+  ssl_certificate /etc/letsencrypt/live/<%= @domain_names.first %>/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/<%= @domain_names.first %>/privkey.pem;
+
+  ssl_protocols               TLSv1 TLSv1.1 TLSv1.2;
+  ssl_prefer_server_ciphers   on;
+  ssl_ciphers                 "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA !RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS";
+
+  passenger_enabled on;
+  passenger_app_env <%= @rails_env %>;
+
+  <%= "client_max_body_size #{@client_max_body_size};" if @client_max_body_size.to_i != 0 %>
 
   server_name <%= @domain_names.join(' ') %>;
 
   root <%= node['rails']['applications_root'] %>/<%= @name %>/current/public;
-
-  location / {
-    try_files $uri @app;
-  }
-
-  location @app {
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
-    proxy_set_header X-Forwarded-Proto https;
-    proxy_redirect off;
-
-    proxy_pass http://<%= @name %>;
-    <%= @custom_configuration["ssl_app"] %>
-  }
-  <%= "client_max_body_size #{@client_max_body_size};" if @client_max_body_size.to_i != 0 %>
   <%= @custom_configuration["ssl_main"] %>
 }
 
 <% end %>
-
-upstream <%= @name %> {
-  server unix:<%= node['rails']['applications_root'] %>/<%= @name %>/shared/tmp/sockets/unicorn.sock;
-  <%= @custom_configuration["upstream"] %>
-}
 
 <%= @custom_configuration["after_server"] %>
