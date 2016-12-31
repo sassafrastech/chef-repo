@@ -40,10 +40,10 @@ SITE
       chef-sugar (>= 3.1.1)
     packagecloud (0.2.5)
     postfix (3.6.2)
-    postgresql (3.4.24)
+    postgresql (5.2.0)
       apt (>= 1.9.0)
-      build-essential (>= 0.0.0)
-      openssl (~> 4.0)
+      build-essential (>= 2.0.0)
+      openssl (>= 4.0)
     rbenv (1.7.1)
       apt (>= 0.0.0)
       build-essential (>= 0.0.0)
@@ -65,6 +65,18 @@ PATH
   remote: vendor/cookbooks/backups
   specs:
     backups (0.1.0)
+
+PATH
+  remote: vendor/cookbooks/elmo
+  specs:
+    elmo (0.0.1)
+
+PATH
+  remote: vendor/cookbooks/mysql_extras
+  specs:
+    mysql_extras (0.0.1)
+      mysql (~> 8.0)
+      mysql2_chef_gem (~> 1.1)
 
 PATH
   remote: vendor/cookbooks/packages
@@ -95,15 +107,18 @@ PATH
 DEPENDENCIES
   apt (~> 2.6.1)
   backups (>= 0)
+  elmo (>= 0)
   mysql (~> 8.0)
   mysql2_chef_gem (~> 1.1)
+  mysql_extras (>= 0)
   nginx (~> 2.7.4)
   packages (>= 0)
   postfix (~> 3.6.2)
-  postgresql (~> 3.4.1)
+  postgresql (~> 5.0)
   rails (>= 0)
   rbenv (~> 1.7.1)
   ruby_build (~> 0.8.0)
   ssh_deploy_keys (>= 0)
   sudo (~> 2.7.0)
   sysadmins (>= 0)
+
