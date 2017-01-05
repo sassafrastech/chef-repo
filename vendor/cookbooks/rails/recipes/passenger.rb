@@ -131,7 +131,7 @@ if node[:active_applications]
       has_ssl_info = true
     end
 
-    enable_ssl = has_ssl_info ||
+    enable_ssl = app_info["enable_ssl"] || has_ssl_info ||
       File.exists?("#{applications_root}/#{app}/shared/config/certificate.crt")
     template "/etc/nginx/sites-available/#{app}.conf" do
       source "app_nginx.conf.erb"
