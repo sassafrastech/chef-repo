@@ -36,7 +36,7 @@ execute "real_cert" do
   command "rm -rf #{cert_dir} &&
     letsencrypt certonly --webroot --noninteractive -w #{acme_challenge_dir} \
       --agree-tos --email #{node[:letsencrypt][:email]} -d #{site}"
-  only_if { ::File.exist?("#{cert_dir}/selfsigned") }
+  only_if { ::File.exist?("#{cert_dir}/selfsigned") && !node[:letsencrypt][:self_signed_only] }
   notifies :reload, "service[nginx]", :immediate
 end
 
