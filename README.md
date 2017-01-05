@@ -21,7 +21,7 @@ bundle exec knife cook prepare vagrant@localhost -i .vagrant/machines/default/vi
 
 ```
 bundle exec knife solo prepare root@1.2.3.4
-bundle exec knife cook prepare root@1.2.3.4 nodes/mynode.json
+bundle exec knife solo cook root@1.2.3.4 nodes/mynode.json
 ```
 
 ## Testing with test-kitchen
