@@ -43,5 +43,5 @@ end
 cron "letsencrypt_renewal" do
   minute (Digest::MD5.hexdigest(site).hex % 60).to_s # Consistent but random minute based on domain name.
   user "root"
-  command "/usr/bin/letsencrypt renew --agree-tos > /dev/null 2>&1"
+  command "/usr/bin/letsencrypt renew --agree-tos --post-hook \"service nginx reload\" > /dev/null 2>&1"
 end
