@@ -14,7 +14,7 @@ cp nodes/sample_host.json nodes/mynode.json # Then fill in values
 ```
 vagrant up --provider virtualbox
 bundle exec knife solo prepare vagrant@localhost -i .vagrant/machines/default/virtualbox/private_key -p 2222
-bundle exec knife cook prepare vagrant@localhost -i .vagrant/machines/default/virtualbox/private_key -p 2222 nodes/mynode.json
+bundle exec knife solo cook vagrant@localhost -i .vagrant/machines/default/virtualbox/private_key -p 2222 nodes/mynode.json
 ```
 
 ## Working with Other Host
