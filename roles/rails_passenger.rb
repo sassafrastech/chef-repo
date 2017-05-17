@@ -4,7 +4,7 @@ run_list(
   "role[base]",
   "recipe[packages]",
   "recipe[rails::passenger]",
-  "recipe[rails::letsencrypt]",
+  #"recipe[rails::letsencrypt]", <-- This is broken and needs to be redone using newer methods.
   "recipe[ruby_build]",
   "recipe[rbenv]",
   "recipe[rails::databases]",
