@@ -9,6 +9,7 @@ run_list(
   "recipe[rbenv]",
   "recipe[rails::databases]",
   "recipe[rails::env_vars]",
+  "recipe[rails::delayed_job_service]",
   "recipe[git]",
   "recipe[ssh_deploy_keys]",
   "recipe[apt::unattended-upgrades]"

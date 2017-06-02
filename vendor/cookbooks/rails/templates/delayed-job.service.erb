@@ -1,0 +1,18 @@
+[Unit]
+Description=delayed_job_<%= @app %>
+After=syslog.target
+After=mysql.service
+
+[Service]
+Type=forking
+User=deploy
+Environment=RAILS_ENV=production
+Environment=PATH=/opt/rbenv/shims:/opt/rbenv/bin:/opt/rbenv/plugins/ruby_build/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+WorkingDirectory=<%= @current_dir %>
+ExecStart=<%= @current_dir %>/bin/delayed_job start -n 1 -p <%= @app %> --pid-dir=<%= @current_dir %>/tmp
+ExecStop=<%= @current_dir %>/bin/delayed_job stop --pid-dir=<%= @current_dir %>/tmp
+TimeoutSec=120
+
+[Install]
+WantedBy=multi-user.target
