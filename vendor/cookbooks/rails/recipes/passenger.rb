@@ -131,17 +131,15 @@ if node[:active_applications]
       has_ssl_info = true
     end
 
-    enable_ssl = app_info["enable_ssl"] || has_ssl_info ||
-      File.exists?("#{applications_root}/#{app}/shared/config/certificate.crt")
     template "/etc/nginx/sites-available/#{app}.conf" do
       source "app_nginx.conf.erb"
       variables(
         name: app,
         rails_env: rails_env,
         domain_names: app_info["domain_names"],
-        redirect_domain_names: app_info["redirect_domain_names"],
+        redirect_domain_names: app_info["redirect_domain_names"] || [],
         client_max_body_size: app_info["client_max_body_size"],
-        enable_ssl: enable_ssl,
+        enable_ssl: app_info["enable_ssl"],
         custom_configuration: nginx_custom_configuration(app_info))
       notifies :reload, "service[nginx]"
     end
