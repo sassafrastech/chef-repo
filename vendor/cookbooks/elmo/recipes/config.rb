@@ -6,10 +6,14 @@ if node[:active_applications]
     config_dir = "#{shared_dir}/config"
     elmo_config = app_info["elmo_config"]
 
+    directory shared_dir do
+      owner "deploy"
+      group "deploy"
+    end
+
     directory config_dir do
       owner "deploy"
       group "deploy"
-      recursive true
     end
 
     template "#{config_dir}/local_config.rb" do
