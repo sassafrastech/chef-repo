@@ -5,7 +5,7 @@ Sassafras Chef Recipes
 
 ```
 bundle install
-librarian-chef install
+berks install
 cp nodes/sample_host.json nodes/mynode.json # Then fill in values
 ```
 

@@ -1,15 +1,14 @@
-site "https://supermarket.getchef.com/api/v1"
+source 'https://supermarket.chef.io'
+metadata
 
 # Community cookbooks
-cookbook "apt", "~> 2.6.1"
 cookbook "mysql", "~> 8.0"
-cookbook "postgresql", "~> 5.0"
+cookbook "postgresql", "~> 6.1"
 cookbook "nginx", "~> 2.7.4"
-cookbook "postfix", "~> 3.6.2"
-cookbook "sudo", "~> 2.7.0"
+cookbook "postfix", "~> 5.0"
+cookbook "sudo", "~> 3.5"
 cookbook "rbenv", "~> 1.7.1"
-cookbook "ruby_build", "~> 0.8.0"
-cookbook "mysql2_chef_gem", "~> 1.1"
+cookbook "ruby_build", "~> 1.1.0"
 
 # Our own cookbooks from vendor/
 cookbook "packages", path: "vendor/cookbooks/packages"
